@@ -9,6 +9,17 @@ resource aws_apprunner_service aws-runner-poc {
     code_repository {
       code_configuration {
         configuration_source = "REPOSITORY"
+
+        code_configuration_values {
+          # Bug in aws_apprunner_service resource marks resource modified without this section
+          # consider removeing this section all togather when bug is fixed
+          # ignore values, thouse are defaults
+          build_command = ""
+          port = "8080"
+          runtime = "PYTHON_3"
+          runtime_environment_variables = { }
+          start_command = ""
+        }
       }
       repository_url = "https://github.com/chaliy/aws-apprunner-poc"
       source_code_version {
@@ -26,5 +37,12 @@ resource aws_apprunner_service aws-runner-poc {
   instance_configuration {
     cpu = "2048" // 2 vCPU
     memory = "4096" // 4 GB
+    instance_role_arn = aws_iam_role.instance-role.arn
   }
+
+  depends_on = [aws_iam_role.instance-role]
+}
+
+output apprunner_service_url {
+  value = "https://${aws_apprunner_service.aws-runner-poc.service_url}"
 }

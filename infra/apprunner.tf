@@ -35,12 +35,17 @@ resource aws_apprunner_service aws-runner-poc {
   }
 
   instance_configuration {
-    cpu = "2048" // 2 vCPU
-    memory = "4096" // 4 GB
+    cpu = "1024" // 1 vCPU
+    memory = "2048" // 2 GB
     instance_role_arn = aws_iam_role.instance-role.arn
   }
 
   depends_on = [aws_iam_role.instance-role]
+}
+
+resource aws_apprunner_custom_domain_association aap-chaliy-name {
+  domain_name = "aap.chaliy.name"
+  service_arn = aws_apprunner_service.aws-runner-poc.arn
 }
 
 output apprunner_service_url {
